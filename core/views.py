@@ -692,3 +692,26 @@ def dashboard_summary(request):
         "maintenance": maint_count
     })
 
+
+
+def health_check(request):
+    """
+    Keep-alive endpoint to ping Supabase PostgreSQL and prevent inactivity pause.
+    Can be called by cron jobs (Vercel Cron, GitHub Actions, UptimeRobot, etc).
+    """
+    try:
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1;")
+            cursor.fetchone()
+        return JsonResponse({
+            "status": "healthy",
+            "database": "connected",
+            "message": "Supabase PostgreSQL keep-alive ping successful",
+            "timestamp": time.time()
+        })
+    except Exception as e:
+        return JsonResponse({
+            "status": "unhealthy",
+            "error": str(e)
+        }, status=500)

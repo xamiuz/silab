@@ -1,0 +1,26 @@
+name: Supabase & Web Keep-Alive
+
+on:
+  schedule:
+    # Runs every 12 hours (00:00 and 12:00 UTC)
+    - cron: '0 0,12 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Web App Health Endpoint
+        run: |
+          echo "Pinging Vercel Deployment Health Endpoint..."
+          curl -fsSL https://silab-umkt.vercel.app/api/health || curl -fsSL https://silab-xi.vercel.app/api/health || echo "Web ping done"
+
+      - name: Direct Ping to Supabase REST API
+        run: |
+          echo "Pinging Supabase REST API directly..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://hxsmcgsmsprguzbuiphy.supabase.co/rest/v1/" \
+            -H "apikey: sb_publishable_empmzEuTidVkiBUmRErwnQ_5KcI-pwn" \
+            -H "Authorization: Bearer sb_publishable_empmzEuTidVkiBUmRErwnQ_5KcI-pwn")
+          echo "Supabase Response Status Code: $STATUS"
+

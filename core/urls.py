@@ -19,6 +19,10 @@ urlpatterns = [
     path('api/login', views.api_login, name='api_login'),
     path('api/logout', views.api_logout, name='api_logout'),
 
+    # Keep-Alive / Health
+    path('api/health', views.health_check, name='health_check'),
+    path('api/health/', views.health_check, name='health_check_slash'),
+
     # APIs
     path('api/labs', views.handle_labs, name='handle_labs'),
     path('api/labs/<int:lab_id>', views.handle_lab_detail, name='handle_lab_detail'),
